@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>EmergeJS demo</title>
+    <link rel="stylesheet" href="css/screen.css">
+    <link rel="stylesheet" href="css/emergejs.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="js/emerge.js"></script>
+    <style type="text/css">
+      .notification {
+        display: none;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <h1>EmergeJS demo</h1>
+    <p>EmergeJS is a lightweight, customizable jQuery plugin for displaying
+      elements.</p>
+
+    <a href="#" id="show-alert">Show Alert</a><br>
+    <a href="#" id="show-info">Show Info</a><br>
+    <a href="#" id="show-success">Show Success</a><br>
+    <a href="#" id="show-lorem">Show Lorem Ipsum</a>
+<div id="notification-1" class="notification">Alert</div>
+<div id="notification-2" class="notification">Information</div>
+<div id="notification-3" class="notification">Success</div>
+<div id="notification-4" class="notification">lorem ipsum dolor sit amet</div>
+
+<script>
+  $('#show-alert').click(function() {
+    $( "#notification-1" ).emerge({
+      theme: 'emerge-base top-right alert',
+    });
+  });
+  $('#show-info').click(function() {
+    $( "#notification-2" ).emerge({
+      theme: 'emerge-base top-left info',
+    });
+  });
+  $('#show-success').click(function() {
+    $( "#notification-3" ).emerge({
+      theme: 'emerge-base top-center success',
+    });
+  });
+  $('#show-lorem').click(function() {
+    $( "#notification-4" ).emerge({
+      theme: 'emerge-base top-full day',
+    });
+  });
+
+</script>
+  </body>
+</html>
