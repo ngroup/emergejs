@@ -18,8 +18,8 @@ $.fn.extend
       lifetime: 2400
       speedShow: 200
       speedHide: 200
-      hideOnClick: true,
-      eventClick: ->,
+      hideOnClick: true
+      eventClick: ->
 
     # Merge default settings with options.
     settings = $.extend settings, options
