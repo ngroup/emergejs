@@ -1,40 +1,90 @@
 ###
-#  EmergeJS 1.0
+#  EmergeJS 1.0.1
 #  https://github.com/ngroup/emergejs
 #
 #  Copyright (c) 2014 Chun Nien
 #  Released under the MIT license
 ###
 
-# Reference jQuery
-$ = jQuery
+# a closure
+do ($ = jQuery) ->
 
-$.fn.extend
-  emerge: (options) ->
-    # Default settings
-    settings =
-      content: null             # string, content to display in HTML format
-      theme: null               # string, classes to apply
-      lifetime: 2400
-      speedShow: 200
-      speedHide: 200
-      hideOnClick: true
-      eventClick: ->
+  $.emerge = {}
 
-    # Merge default settings with options.
-    settings = $.extend settings, options
+  $.fn.emerge = (method) ->
+      methods = $.emerge.methods
+      ## Method calling logic
+      if methods[method]
+        return methods[method].apply(this, Array.prototype.slice.call(arguments, 1))
+      else if (typeof method is 'object' or not method)
+        return methods.init.apply(this, arguments)
+      else
+        $.error( 'Method ' +  method + ' does not exist on EmergeJS' )
+        return
 
-    return @each ->
-      $this = $(this)
-      if settings.content
-        $this.html(settings.content)
-      if settings.theme
-        $this.removeClass().addClass(settings.theme)
-      $this.fadeIn(settings.showSpeed)
-      if settings.hideOnClick
-        settings.eventClick = ->
-          this.hide()
-      $this.click ->
-        settings.eventClick.apply($this)
-      if settings.lifetime
-        $this.delay(settings.lifetime).fadeOut(settings.hideSpeed)
+  $.emerge.queue = []
+
+  # the default options
+  $.emerge.options =
+    content: null             # string, content to display in HTML format
+    theme: null               # string, classes to apply
+    lifetime: 2400
+    speedShow: 200
+    speedHide: 200
+    hideOnClick: true
+    eventClick: ->
+
+  $.emerge.methods =
+    init: (options) ->
+      options = $.extend {}, $.emerge.options, options
+      return @each ->
+        $this = $(@)
+        $this.emerge('show', options)
+        $this.emerge('bindEvent', options)
+        if options.lifetime
+          setTimeout( ->
+            $this.emerge('hide', options)
+            return
+          ,options.lifetime)
+        return
+
+    show: (options) ->
+      options = $.extend {}, $.emerge.options, options
+      return @each ->
+        $this = $(this)
+        if options.content
+          $this.html(options.content)
+        if options.theme
+          $this.removeClass().addClass(options.theme)
+        $this.fadeIn(options.showSpeed)
+        if this not in $.emerge.queue
+          $.emerge.queue.push this
+        return
+
+    hide: (options) ->
+      options = $.extend {}, $.emerge.options, options
+      return @each ->
+        $this = $(this)
+        $this.fadeOut(options.hideSpeed)
+        $this.promise().done ->
+          thisIdx = $.emerge.queue.indexOf(this)
+          $.emerge.queue.splice(thisIdx, 1)
+          return
+        return
+
+    bindEvent: (options) ->
+      options = $.extend {}, $.emerge.options, options
+      return @each ->
+        $this = $(this)
+        if options.hideOnClick
+          options.eventClick = ->
+            this.hide()
+        $this.click ->
+          options.eventClick.apply($this)
+        return
+
+  $.emerge.addMethods = (newMethods) ->
+      $.emerge.methods = $.extend $.emerge.methods, newMethods
+      return
+
+  return
